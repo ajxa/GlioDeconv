@@ -81,19 +81,36 @@ shinyServer(function(input, output, session) {
  
   data <- reactive({
   
+    # if(input$example_data == FALSE && is.null(input$upload_file)){
+    # 
+    #   validate('Please upload data or run example to view')
+    # 
+    #   }
+    # 
+    # if(input$example_data) return(example_data)
+    # 
+    # return(
+    # 
+    #     load_user_data(name = input$upload_file$name,
+    #                    path = input$upload_file$datapath)
+    #     )
+    # 
+    
     if(input$example_data == FALSE && is.null(input$upload_file)){
       
       validate('Please upload data or run example to view')
       
-      }
+    } else if(input$example_data){
+      
+      return(example_data)
+      
+    }else{
+      
+      return(load_user_data(name = input$upload_file$name,
+                            path = input$upload_file$datapath))
+    }
     
-    if(input$example_data) return(example_data)
     
-    return(
-
-        load_user_data(name = input$upload_file$name,
-                       path = input$upload_file$datapath)
-        )
   })
   
   input_check <- reactive({
@@ -190,23 +207,6 @@ shinyServer(function(input, output, session) {
                     neftel_sigs = selected_markers$neoplastic_markers,
                     immune_markers =  selected_markers$immune_markers)
    }
-
-
-    # if(input$tumour_intrinsic){
-    # 
-    #   deconv_markers(exprs_matrix = cleaned_data(),
-    #                  neftel_sigs = gene_markers$neftel2019_neoplastic,
-    #                  TI_genes_only = TRUE,
-    #                  TI_markers = gene_markers$wang2017_tumor_intrinsic,
-    #                  immune_markers =  gene_markers$ajaib2022_immune
-    #                  )
-    # 
-    #   }else{
-    # 
-    #   deconv_markers(exprs_matrix = cleaned_data(),
-    #                  neftel_sigs = gene_markers$neftel2019_neoplastic,
-    #                  immune_markers =  gene_markers$ajaib2022_immune)
-    #   }
 
   })
 
