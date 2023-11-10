@@ -11,7 +11,7 @@ output:
 
 <ol>
   <li>Select the <b><i class="fa-solid fa-person-running"></i> Run</b> tab</li>
-  <li>Upload your bulk GBM tumour expression profiles</li>
+  <li>Upload your bulk GBM tumour expression profile</li>
   <li>Select and refine your marker gene set</li>
   <li>Download your estimated cell-population abundance scores, markers, and plots</li>
 </ol>

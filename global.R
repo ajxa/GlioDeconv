@@ -115,18 +115,20 @@ options(
 
 gene_markers <- list()
 
-# Neoplastic cell-state markers
-gene_markers$neftel2019_neoplastic <- readRDS("data/Neftel_et_al_2019_four_state_neoplastic_markers.rds")
+gene_markers$ajaib2022 <- readRDS("data/Ajaib_et_al_2022_markers.rds")
 
-gene_markers$moreno2022_neoplastic <- readRDS("data/Moreno_et_al_2022_lvl3_neoplastic_markers.rds")
+gene_markers$moreno2022 <- readRDS("data/Moreno_et_al_2022_lvl3_markers.rds")
+
+gene_markers$wang2017_tumor_intrinsic <- readRDS("data/Wang_et_al_2017_GBM_TI_markers.rds")
+
+# Neoplastic cell-state markers
+# gene_markers$neftel2019_neoplastic <- readRDS("data/Neftel_et_al_2019_four_state_neoplastic_markers.rds")
+# gene_markers$moreno2022_neoplastic <- readRDS("data/Moreno_et_al_2022_lvl3_neoplastic_markers.rds")
 
 # Immune cell markers
-gene_markers$ajaib2022_immune <- readRDS("data/Ajaib_et_al_2022_GBM_Immune_markers.rds")
+# gene_markers$ajaib2022_immune <- readRDS("data/Ajaib_et_al_2022_GBM_Immune_markers.rds")
+# gene_markers$moreno2022_immune <- readRDS("data/Moreno_et_al_2022_lvl3_immune_markers.rds")
 
-gene_markers$moreno2022_immune <- readRDS("data/Moreno_et_al_2022_lvl3_immune_markers.rds")
-
-# Tumour intrinsic markers
-gene_markers$wang2017_tumor_intrinsic <- readRDS("data/Wang_et_al_2017_GBM_TI_markers.rds")
 
 # example data
 example_data <- readRDS("data/TGCA_GBM_example.rds")

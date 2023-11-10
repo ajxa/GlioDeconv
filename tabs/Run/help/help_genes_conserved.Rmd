@@ -1,0 +1,18 @@
+---
+title: "Percentage Conserved Genes"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+This value relates to the minimum percentage of genes retained in the chosen marker list when compared against the user-supplied maker symbols. 
+
+By default the percentage of conserved genes is set at 50%, but can be altered to allow for more or less genes.
+
+Allowing A large number of missing genes can 
+This number is currently set to 50%
+
+If a large number of genes  each of the marker lists (immune and neoplastic) after filtering that is allowed. sigs not passing this cutoff will not be used to score the matrix. This can be ignored if all genes in sigs are present in rownames(<m>). Default: 0.7
+
+

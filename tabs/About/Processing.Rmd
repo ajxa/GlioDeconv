@@ -2,22 +2,29 @@
   Filtering & Scaling
 </div>
 
-When a new bulk expression dataset is uploaded, any genes which have zero expression across all samples will be filtered out prior to refining neoplastic cell-state markers.
+Any genes that have zero expression across all samples will be filtered out prior to refining the neoplastic cell-state markers.
 
 Expression profiles will also be placed into log2-space prior to refining markers and deconvolution.
 <br/>
 <br/>
 
 <div class="about_header">
-  Refining neoplastic cell-state markers
+  Refining Neoplastic Cell-State Markers
 </div>
 
 The neoplastic cell state markers described be [Neftel et.al (2019)](https://doi.org/10.1016/j.cell.2019.06.024), were derived using single cell RNA-Seq data. However, the expression of genes in bulk samples reflects the combined effect from multiple expressing cell types and therefore many genes, which are good markers for a particular cellular state in single cell data may not be good markers in bulk data.
 
-To exclude such genes, we follow the procedure outlined in the paper under the section titled *"Bulk scores defined for TCGA samples"*. Briefly this involves the following steps:
+To exclude such genes, we follow the procedure outlined in their above paper (under the section titled *"Bulk scores defined for TCGA samples"*). Briefly, this involves the following steps:
 
-1.  Defined initial bulk scores by the average expression of each neoplastic cell-state.
+1.  Define an initial bulk neoplastic cell state scores for each sample, by taking the average expression of each neoplastic cell-state.
 
-2.  Calculate the correlation of each neoplastic cell-state gene with the initial scores.
+2.  Calculate the correlation of each neoplastic cell-state marker gene with the initial bulk cell-state scores.
 
 3.  Exclude genes if their correlation is below 0.4 or if the correlation is higher for a different neoplastic cell-state.
+<br/>
+<br/>
+
+<div class="about_header">
+  Marker Coverage
+</div>
+

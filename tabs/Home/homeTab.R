@@ -28,9 +28,7 @@ tabPanel(title = "Home", icon = icon("home", lib = "font-awesome"),
                  ),
              
              div(class = "lead_text",
-                 "A web application for estimating the abundance of 
-                 immune, stromal and neoplastic cell populations 
-                 using bulk expression profiles, obtained from grade IV glioblastoma (GBM) samples."
+                 "A web application for estimating the abundance of immune, stromal and neoplastic cell populations using bulk RNA-sequencing expression profiles, from grade IV glioblastoma (GBM) tumour samples."
                  ),
              
              panel_div(class_type = "primary", 

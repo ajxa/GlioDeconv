@@ -37,6 +37,9 @@ tabPanel(
                     buttonLabel = "Browse...",
                     accept=c(".csv", ".tsv", ".xlsx")),
           
+          uiOutput(outputId = "reset_button", inline = TRUE),
+          
+          
           shinyWidgets::materialSwitch(inputId = "example_data",
                                        label = tags$div(
                                          class = "deconv_option_header2",
@@ -90,6 +93,20 @@ tabPanel(
                       width = '200px',
                       ),
           br(),
+          
+          # # Input: Decimal interval with step value ----
+          # sliderInput(inputId = "conserved_genes",
+          #             label = tags$div(class = "deconv_option_header",
+          #                              "% Genes Conserved",
+          #                              shiny::actionLink("genes_conserved_percent", 
+          #                                                label = img(src="Icons/help.svg", 
+          #                                                            class = "help_icon"))
+          #             ),
+          #             min = 0, max = 100,
+          #             value = 70, step = 5,
+          #             width = '225px'),
+          # 
+          # br(),
           
           radioButtons(inputId = "tumour_intrinsic",
                        label = tags$div(class = "deconv_option_header",

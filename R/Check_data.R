@@ -4,21 +4,21 @@ check_user_data <- function(input){
     
     return("Insufficient samples (< 2) in data")
     
-  }else if(nrow(input) < 100){
+  }else if(nrow(input) < 500){
     
-    return("Insufficient genes (n < 100) in data")
+    return("Insufficient genes (n < 500) in data")
     
   }else if(!is.character(input[[1]])){
     
-    return("Gene symbols not detected in data")
+    return("Gene symbols not detected in the first column")
     
   }else if(length(unique(colnames(input))) != ncol(input)){
     
-    return("Duplicate samples detected in the data")
+    return("Duplicate sample names detected in the data")
     
   }else if(length(unique(input[[1]])) != nrow(input)){
     
-    return("Duplicate genes detected in the data")
+    return("Duplicate genes symbols detected in the data")
     
   }else if(any(apply(input[,-1], 2, function(x) any(is.na(x))))){
     

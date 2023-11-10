@@ -22,7 +22,7 @@ Once a run has completed, any abundance estimates, markers and plots can be down
 
 <div class = "about_header"> Can I use the results for my publication? </div>
 
-Of course! If you do so, please include references for any dataset(s) you have used and cite <a href="https://doi.org/10.1101/2022.11.19.517187"> our paper</a>
+Of course! If you do so, please include references for any dataset(s) you have used and cite <a href="https://doi.org/10.1093/neuonc/noad021"> our paper</a>.
 <br/>
 
 <div class = "about_header"> I have more questions, how can I reach you? </div>

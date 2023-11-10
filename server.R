@@ -1,8 +1,7 @@
 # This script contains the server logic for the GBMDeconvoluteR Shiny web application. 
 # You can run the application by clicking 'Run App' above.
 
-
-shinyServer(function(input, output, session) {
+server <- function(input, output, session) {
 # SESSION INFO -----------------------------------------------------------------  
   
   session$onSessionEnded(stopApp)
@@ -26,6 +25,7 @@ shinyServer(function(input, output, session) {
     )
   })  
   
+  
   # Example data
   observeEvent(input$run_example_help, {
     
@@ -38,6 +38,7 @@ shinyServer(function(input, output, session) {
                    fade = TRUE)
     )
   })  
+  
   
   # Marker Gene List
   observeEvent(input$marker_genelist_help, {
@@ -52,6 +53,7 @@ shinyServer(function(input, output, session) {
     )
   })  
   
+  
   # Tumour Intrinsic Genes
   observeEvent(input$TI_genes_help, {
   
@@ -65,61 +67,73 @@ shinyServer(function(input, output, session) {
       )
   })  
   
-# DYNAMICALLY GENERATED BUTTON -------------------------------------------------
+# DYNAMICALLY GENERATED RESET BUTTON -------------------------------------------
 
-  # Reactivity required to display the Run and reset buttons 
-  output$finishedUploading <- reactive({
+  # Render the file reset button UI dynamically when a file is uploaded
+  output$reset_button <- renderUI({
 
-    if (is.null(input$upload_file)) 0 else 1
+    if(!is.null(input$upload_file)){
+
+      actionButton(inputId = "reset", 
+                   label = "Reset File Input")
+    }
 
   })
-
-  outputOptions(output, 'finishedUploading', suspendWhenHidden=FALSE)
-
-
-# USER UPLOADED DATA -----------------------------------------------------------
- 
-  data <- reactive({
   
-    # if(input$example_data == FALSE && is.null(input$upload_file)){
-    # 
-    #   validate('Please upload data or run example to view')
-    # 
-    #   }
-    # 
-    # if(input$example_data) return(example_data)
-    # 
-    # return(
-    # 
-    #     load_user_data(name = input$upload_file$name,
-    #                    path = input$upload_file$datapath)
-    #     )
-    # 
+  # Reset file upload when the reset button is clicked
+  observeEvent(input$reset, {
+
+    # Reset the file input by updating its value to NULL
+    shinyjs::reset()
+
+  })
+  
+  observeEvent(!is.null(input$upload_file), {
+    
+    reset("example_data")
+    
+  })
+
+
+# USER DATA AND EXAMPLE DATA ---------------------------------------------------
+ 
+  # Reactive function to ensure data is present
+  data_present <- reactive({
     
     if(input$example_data == FALSE && is.null(input$upload_file)){
       
       validate('Please upload data or run example to view')
       
-    } else if(input$example_data){
+    }else return(TRUE)
+
+  })
+  
+  # User selected input data
+  data <- reactive({
+  
+    req(data_present())
+    
+    if(input$example_data){
       
       return(example_data)
       
     }else{
       
-      return(load_user_data(name = input$upload_file$name,
-                            path = input$upload_file$datapath))
+      return(
+        load_user_data(name = input$upload_file$name,
+                       path = input$upload_file$datapath)
+        )
     }
     
-    
   })
-  
+ 
+  # Reactive function to check user data
   input_check <- reactive({
 
     check_user_data(data())
 
   })
-
-
+  
   # Logic for the file input error modals
   observeEvent(!is.null(data()),{
 
@@ -127,102 +141,138 @@ shinyServer(function(input, output, session) {
 
     if(!is.null(input_check)){
       
-      shinyWidgets::show_alert(title = "",
+      shinyWidgets::show_alert(title = "ERROR",
                                type = "error",
                                btn_labels = 'Dismiss',
                                btn_colors = "#b0aece",
                                text = input_check)
-      
-      # showModal(modalDialog(
-      #   # title = "FILE UPLOAD ERROR!",
-      #   tags$br(),
-      #   tags$image(src = "error.svg",
-      #              style = "width: 25%; display: block; margin-left: auto; margin-right: auto;"),
-      #   tags$br(),
-      #   tags$text(input_check,
-      #   style = "color: gray; font-size: 30px;font-variant-caps: all-small-caps;
-      #            font-weight: 900;display: flex; width: 100%; justify-content: center;
-      #            align-content: center;"),
-      #   footer = NULL,
-      #   easyClose = TRUE,
-      #   fade = TRUE
-      #   ))
-
     }
 
   }, priority = 1, ignoreNULL = FALSE, once = FALSE)
 
-
+  
+# DATA PREPROCESSING -----------------------------------------------------------  
+  
+  # Preprocess the user data
+  cleaned_data <- reactive({
+    
+    req(is.null(input_check()))
+    
+    preprocess_data(data())
+    
+  })
+  
   output$uploaded_data <- DT::renderDataTable({
 
-    req(is.null(input_check()))
-
-    datatable(data(), rownames = FALSE)
-
+    req(cleaned_data())
+    
+      datatable(cleaned_data(), rownames = TRUE)
+    
   }, server = TRUE)
   
-# DECONVOLUTION MARKERS -------------------------------------------------------
-
-  cleaned_data <- reactive({
-
-    req(is.null(input_check()))
-
-    preprocess_data(data())
-
-    })
+# DECONVOLUTION MARKERS --------------------------------------------------------
   
+  # get_markers =  gene_markers$ajaib2022
+  # 
+  # cleaned_data = preprocess_data(example_data)
+  # 
+  # check_marker_coverage(
+  #   input = cleaned_data,
+  #   markers = get_markers,
+  #   conserved_min = 50
+  # )
+
+  # User selected markers
   get_markers <- reactive({
-
+    
     req(cleaned_data(), cancelOutput = TRUE)
-
-
-   selected_markers <- switch(input$markergenelist,
-
-           `Ajaib et.al (2022)` = {
-
-             list(neoplastic_markers = gene_markers$neftel2019_neoplastic,
-                  immune_markers = gene_markers$ajaib2022_immune)
-
-             },
-
-           `Ruiz-Moreno et.al (2022)` ={
-
-             list(neoplastic_markers = gene_markers$moreno2022_neoplastic,
-                  immune_markers = gene_markers$moreno2022_immune)
-           })
-
-
-   if(input$tumour_intrinsic){
-
-     deconv_markers(exprs_matrix = cleaned_data(),
-                    neftel_sigs = selected_markers$neoplastic_markers,
-                    TI_genes_only = TRUE,
-                    TI_markers = gene_markers$wang2017_tumor_intrinsic,
-                    immune_markers =  selected_markers$immune_markers
-     )
-
-   }else{
-
-     deconv_markers(exprs_matrix = cleaned_data(),
-                    neftel_sigs = selected_markers$neoplastic_markers,
-                    immune_markers =  selected_markers$immune_markers)
-   }
-
+    
+    selected = switch(input$markergenelist,
+      `Ajaib et.al (2022)` = gene_markers$ajaib2022,
+      `Ruiz-Moreno et.al (2022)` = gene_markers$moreno2022
+      )
+    
+    # if(input$tumour_intrinsic){
+    #   
+    #   deconv_markers(
+    #     exprs_matrix = cleaned_data(),
+    #     neftel_sigs = selected_markers$neoplastic_markers,
+    #     TI_genes_only = TRUE,
+    #     TI_markers = gene_markers$wang2017_tumor_intrinsic,
+    #     immune_markers =  selected_markers$immune_markers
+    #   )
+    # 
+    # }else{
+    # 
+    #   deconv_markers(
+    #     exprs_matrix = cleaned_data(),
+    #     neftel_sigs = selected_markers$neoplastic_markers,
+    #     immune_markers =  selected_markers$immune_markers
+    #   )
+    # }
+    
   })
+  
+  # Check the refined markers
+  marker_coverage_check <- reactive({
+    
+    req(cleaned_data(), cancelOutput = TRUE)
+    
+    check_marker_coverage(input = cleaned_data(),
+                          markers = get_markers(),
+                          conserved_min = 50)
+    
+  })
+  
+  # Logic for the file input error modals
+  observeEvent(!is.null(marker_coverage_check()),{
+
+    if(!is.null(marker_coverage_check())){
+    
+    shinyWidgets::show_alert(title = "Error: Low Marker Coverage",
+                             type = "error",
+                             btn_labels = 'Dismiss',
+                             btn_colors = "#b0aece",
+                             text = marker_coverage_check()$error_msg,
+                             html = TRUE
+                             )
+      
+    }
+
+    }, priority = 1, ignoreNULL = FALSE, once = FALSE)
 
   output$deconv_markers <- DT::renderDataTable({
     
-    datatable(get_markers(), rownames = FALSE, 
-              extensions = c("FixedColumns", 'Buttons')
-              )
+    req(!is.null(get_markers()))
+    
+    if(!is.null(marker_coverage_check())){
+      
+      datatable(marker_coverage_check()$coverage_table, 
+                rownames = FALSE, 
+                extensions = c("FixedColumns", 'Buttons')
+                )
+      
+    }else{
+      
+      datatable(get_markers(), rownames = FALSE, 
+                extensions = c("FixedColumns", 'Buttons')
+                )
+    }
     
   }, server = TRUE)
   
 # DECONVOLUTION SCORES ---------------------------------------------------------
   
+  # Score the cleaned data using the refined markers
   scores  <-  reactive({
     
-    req(get_markers(), cancelOutput = TRUE)
+    req(get_markers(), cancelOutput = FALSE)
+    
+    if(!is.null(marker_coverage_check())){
+      
+      validate('Gene coverage is too low to score data')
+    
+    }
     
     score_data(exprs_data = cleaned_data(),
                markers = get_markers(),
@@ -242,7 +292,7 @@ shinyServer(function(input, output, session) {
   
   plot_output <- reactive({
     
-    req(scores())
+    req(scores(), cancelOutput = FALSE)
     
     switch(input$markergenelist,
            
@@ -286,52 +336,60 @@ shinyServer(function(input, output, session) {
                                    width = scale_plot_width, 
                                    height = scale_plot_height
                                    ) 
-# DOWNLOAD PLOT ---------------------------------------------------------------  
   
+# DYNAMIC DOWNLOAD PLOT BUTTON -------------------------------------------------
+  
+  # Dynamically render the plot download button
   output$download_options <- renderUI({
     
-    req(!is.null(input$upload_file) || input$example_data)
-    
-    
-    dropdown(
+    if(!is.null(input$upload_file) || input$example_data == TRUE) {
       
-      selectInput(inputId = "file_format", 
-                  label = tags$p("File Type",
-                                 style = "font-weight: 300;
+      if(is.null(marker_coverage_check())){
+      
+      dropdown(
+        
+        selectInput(inputId = "file_format", 
+                    label = tags$p("File Type",
+                                   style = "font-weight: 300;
                                           color: #0000006e;
                                           margin-bottom: 0px"),
-                  choices= list("Vector Graphic Formats" = c("pdf","svg"),
-                                "Raster Graphic Formats" = c("png","tiff")),
-                  multiple = FALSE),
-      br(),
+                    choices= list("Vector Graphic Formats" = c("pdf","svg"),
+                                  "Raster Graphic Formats" = c("png","tiff")),
+                    multiple = FALSE),
+        br(),
+        
+        downloadBttn(outputId = "downloadData",
+                     label = "Click to Download",
+                     style = "unite",
+                     color = "success",
+                     size = "sm",
+                     no_outline = TRUE),
+        
+        style = "simple",
+        size = "md",
+        label = "",
+        no_outline = TRUE,
+        icon = icon("sliders", verify_fa = FALSE),
+        
+        tooltip = tooltipOptions(placement = "right",
+                                 title = "Download Options") ,
+        status = "primary", 
+        width = "215px",
+        
+        animate = animateOptions(
+          enter = animations$fading_entrances$fadeInLeftBig,
+          exit = animations$fading_exits$fadeOutRightBig
+        ),
+      )
       
-      downloadBttn(outputId = "downloadData",
-                   label = "Click to Download",
-                   style = "unite",
-                   color = "success",
-                   size = "sm",
-                   no_outline = TRUE),
-      
-      style = "simple",
-      size = "md",
-      label = "",
-      no_outline = TRUE,
-      icon = icon("sliders", verify_fa = FALSE),
-      
-      tooltip = tooltipOptions(placement = "right",
-                               title = "Download Options") ,
-      status = "primary", 
-      width = "215px",
-      
-      animate = animateOptions(
-        enter = animations$fading_entrances$fadeInLeftBig,
-        exit = animations$fading_exits$fadeOutRightBig
-        )
-    )
+        }
+      }
     
   })
   
   
+# DOWNLOAD BUTTON HANDLER ------------------------------------------------------
+
   output$downloadData <- downloadHandler(
     
     contentType = paste("img/", input$file_format, sep = ""),
@@ -432,5 +490,5 @@ shinyServer(function(input, output, session) {
     
     )
   
-  
-})
+# END --------------------------------------------------------------------------  
+}
