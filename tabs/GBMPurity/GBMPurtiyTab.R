@@ -4,7 +4,7 @@
 # on a main tabbed panel on the right hand side of the page.
 
 tabPanel(
-  title = "GBMPurity", icon = icon("robot", lib = "font-awesome"),
+  title = "GBMPurity", value = "GBMPurity", icon = icon("robot", lib = "font-awesome"),
   tagList(tags$head(includeCSS("www/styles.css"))),
   div(
     id = "run",
@@ -68,7 +68,7 @@ tabPanel(
             title = "Data",
             id = "uploaded_tab_purity",
             value = "data_selected_purity",
-            DT::dataTableOutput(outputId = "uploaded_data") %>%
+            DT::dataTableOutput(outputId = "uploaded_data_purity") %>%
               shinycssloaders::withSpinner(
                 image = "gifs/Busy_running.gif",
                 image.width = "50%"

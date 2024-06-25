@@ -1,7 +1,7 @@
 #' global.R for GBMDeconvoluteR
 #
-# GBMDeconvoluteR is free software; you can redistribute it and/or 
-# modify it under the terms of the GNU General Public License as published by 
+# GBMDeconvoluteR is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published by
 # the Free SoftwareFoundation; either version 3 of the License, or (at your option) any later
 # version.
 #
@@ -25,6 +25,12 @@ library(DT)
 library(MCPcounter)
 library(tinyscalop)
 library(openxlsx)
+library(reticulate)
+library(shinymanager)
+
+# Allowing use of Python
+use_condaenv("GBMPurity")
+source_python("./Python/GBMPurity.py")
 
 # GLOABAL OPTIONS ----
 
@@ -32,34 +38,36 @@ library(openxlsx)
 options(shiny.usecairo = TRUE)
 
 # Sets the maximum file upload size to 200Mb
-options(shiny.maxRequestSize= 50*1024^2)
+options(shiny.maxRequestSize = 50 * 1024^2)
 
 # DT options
 
 options(
-  
-  DT.options = list(lengthMenu = list(c(50, 100, -1), 
-                                      c('50','100','All')
-                                      ), 
-                     
-                     buttons = list('copy', 
-                                    list(extend = 'collection',
-                                         buttons = c('csv', 'excel', 'pdf'),
-                                         text = 'Download')
-                                    ),
-                    
-                     serverSide = FALSE,
-                     pagingType = "full",
-                     dom = 'lfBrtip',
-                     width = "100%",
-                     height = "100%",
-                     scrollX = TRUE,
-                     scrollY = "475px",
-                     scrollCollapse = TRUE, 
-                     orderClasses = TRUE, 
-                     autoWidth = FALSE,
-                     search = list(regex = TRUE)
-                    )
+  DT.options = list(
+    lengthMenu = list(
+      c(50, 100, -1),
+      c("50", "100", "All")
+    ),
+    buttons = list(
+      "copy",
+      list(
+        extend = "collection",
+        buttons = c("csv", "excel", "pdf"),
+        text = "Download"
+      )
+    ),
+    serverSide = FALSE,
+    pagingType = "full",
+    dom = "lfBrtip",
+    width = "100%",
+    height = "100%",
+    scrollX = TRUE,
+    scrollY = "475px",
+    scrollCollapse = TRUE,
+    orderClasses = TRUE,
+    autoWidth = FALSE,
+    search = list(regex = TRUE)
+  )
 )
 
 
@@ -69,43 +77,43 @@ options(
 
 # Function which reads in multiple datasets at once
 # load_datasets <- function(x){
-# 
+#
 #   tryCatch(                       # Applying tryCatch
-#     
+#
 #     expr = {                      # Specifying expression
-#       
+#
 #       assign(x = tools::file_path_sans_ext(basename(x)),
 #              value = readRDS(x),
-#              envir = .GlobalEnv) 
-#       
-#       
+#              envir = .GlobalEnv)
+#
+#
 #       message(
-#         
+#
 #         crayon::green("Loaded", tools::file_path_sans_ext(basename(x))),
-#         
+#
 #         appendLF = TRUE
-#         
+#
 #         )
-#       
+#
 #     },
-#     
+#
 #     error = function(e){          # Specifying error message
-#       
+#
 #       message(
-#         
-#         crayon::red(tools::file_path_sans_ext(basename(x)), 
+#
+#         crayon::red(tools::file_path_sans_ext(basename(x)),
 #                     "Could Not Be Loaded!"),
-#         
+#
 #         appendLF = TRUE
-#         
+#
 #         )
 #     },
-#     
+#
 #     warning = function(w){        # Specifying warning message
 #       message("There was a warning message.")
 #     }
 #   )
-#   
+#
 # }
 
 # load_datasets usage
@@ -142,10 +150,12 @@ plot_order <- readRDS("data/plot_order.rds")
 
 # Generates the panels found on the home and about tabs
 
-panel_div <-function(class_type, panel_title, content) {
+panel_div <- function(class_type, panel_title, content) {
   HTML(paste0("<div class='panel panel-", class_type,
-              "'> <div class='panel-heading'><h3 class='panel-title'>", panel_title,
-              "</h3></div><div class='panel-body'>", content,  "</div></div>", sep=""))
+    "'> <div class='panel-heading'><h3 class='panel-title'>", panel_title,
+    "</h3></div><div class='panel-body'>", content, "</div></div>",
+    sep = ""
+  ))
 }
 
 # END ----

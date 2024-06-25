@@ -91,6 +91,47 @@ shinyServer(function(input, output, session) {
     )
   })
 
+  ### GBMPurity Tab ----------------------------------------------------------------
+
+  # URL navigation
+  observe({
+    path <- sub("/", "", session$clientData$url_pathname)
+    updateNavbarPage(session, "nav", selected = path)
+  })
+
+  observeEvent(input$nav, {
+    path <- paste0("/", input$nav)
+    session$sendCustomMessage(type = "setPath", path)
+  })
+
+
+  observe({
+    if (input$nav == "GBMPurity") {
+      print("GBMPurity")
+
+      # Reactive expression to handle uploaded file for GBMPurity
+      data_purity <- reactive({
+        if (input$example_data_purity == FALSE && is.null(input$upload_file_purity)) {
+          validate("Please upload data or run example to view")
+        }
+        req(input$upload_file_purity)
+        ext <- tools::file_ext(input$upload_file_purity$name)
+        if (ext %in% c("csv", "tsv", "xlsx")) {
+          py_data <- py$pyLoadData(input$upload_file_purity$name, input$upload_file_purity$datapath)
+          return(py_to_r(py_data))
+        } else {
+          validate("Invalid file; Please upload a .csv, .tsv, or .xlsx file")
+        }
+      })
+
+      # Render data table for GBMPurity
+      output$uploaded_data_purity <- renderDT({
+        req(data_purity())
+        datatable(data_purity())
+      })
+    }
+  })
+
   # DYNAMICALLY GENERATED BUTTON -------------------------------------------------
 
   # Reactivity required to display the Run and reset buttons
