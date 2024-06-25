@@ -18,7 +18,7 @@ Expression values should be normalised such that the expression levels are compa
 
 
 
-**TMP** - transcripts per kilobase million
+**TPM** - transcripts per kilobase million
 
 **CPM** - counts per million
 
@@ -28,4 +28,4 @@ Expression values should be normalised such that the expression levels are compa
 
 <br/>
 
-Expression values must ***NOT*** be on a logarithmic scale, as they will scaled during scoring.
+Expression values must ***NOT*** be on a logarithmic scale, as they will be scaled during scoring.
