@@ -1,0 +1,18 @@
+---
+title: "Uploading Data"
+output: html_document
+---
+
+***The maximum file upload size is: 50Mb***
+
+The following file formats are supported for the uploading your bulk expression profiles: **csv**, **tsv**, **xlsx**.
+
+All uploaded data should have samples in columns and genes in rows. The first column should be in string/character format and contain gene symbols. Moreover, all genes and samples should be unique:
+
+<br/>
+<image src= "example_input.png" width = "100%"/>
+
+<br/>
+
+Uploaded data should be <b>raw, untransformed, gene expression counts</b> as they are transformed prior to inference.
+
