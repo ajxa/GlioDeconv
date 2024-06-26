@@ -74,6 +74,16 @@ tabPanel(
                 image.width = "50%"
               )
           ),
+          tabPanel(
+            title = "Results",
+            id = "results_tab_purity",
+            value = "results_selected_purity",
+            DT::dataTableOutput(outputId = "purity_estimates") %>%
+              shinycssloaders::withSpinner(
+                image = "gifs/Busy_running.gif",
+                image.width = "50%"
+              )
+          )
         ), # END TABSETPANEL
 
         # MAIN PANEL UI END ----

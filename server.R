@@ -104,11 +104,8 @@ shinyServer(function(input, output, session) {
     session$sendCustomMessage(type = "setPath", path)
   })
 
-
   observe({
     if (input$nav == "GBMPurity") {
-      print("GBMPurity")
-
       # Reactive expression to handle uploaded file for GBMPurity
       data_purity <- reactive({
         if (input$example_data_purity == FALSE && is.null(input$upload_file_purity)) {
@@ -117,17 +114,31 @@ shinyServer(function(input, output, session) {
         req(input$upload_file_purity)
         ext <- tools::file_ext(input$upload_file_purity$name)
         if (ext %in% c("csv", "tsv", "xlsx")) {
-          py_data <- py$pyLoadData(input$upload_file_purity$name, input$upload_file_purity$datapath)
+          py_data <- py$pyLoadData(ext, input$upload_file_purity$datapath)
           return(py_to_r(py_data))
         } else {
           validate("Invalid file; Please upload a .csv, .tsv, or .xlsx file")
         }
       })
 
-      # Render data table for GBMPurity
+      # Render input for GBMPurity
       output$uploaded_data_purity <- renderDT({
         req(data_purity())
         datatable(data_purity())
+      })
+
+      purity_estimates <- reactive({
+        req(data_purity())
+        py_data <- py$GBMPurity(data_purity())
+        df <- py_to_r(py_data)
+        df$Purity <- as.numeric(df$Purity)
+        df$Purity <- round(df$Purity, 3)
+        return(df)
+      })
+
+      output$purity_estimates <- renderDT({
+        req(purity_estimates())
+        datatable(purity_estimates())
       })
     }
   })
