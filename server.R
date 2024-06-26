@@ -124,9 +124,10 @@ shinyServer(function(input, output, session) {
       # Render input for GBMPurity
       output$uploaded_data_purity <- renderDT({
         req(data_purity())
-        datatable(data_purity())
+        datatable(data_purity(), options = list(dom = "lrtip"), rownames = FALSE)
       })
 
+      # Compute purities on uploaded data
       purity_estimates <- reactive({
         req(data_purity())
         py_data <- py$GBMPurity(data_purity())
@@ -136,10 +137,42 @@ shinyServer(function(input, output, session) {
         return(df)
       })
 
+      # Render purity results
       output$purity_estimates <- renderDT({
         req(purity_estimates())
-        datatable(purity_estimates())
+        datatable(purity_estimates(), options = list(dom = "lrtip"), rownames = FALSE)
       })
+
+      # Conditional file format selection input
+      output$file_format_purity <- renderUI({
+        req(input$upload_file_purity) # Ensure file is uploaded
+        selectInput(
+          inputId = "file_format_purity",
+          label = "Download file format",
+          choices = c("CSV" = "csv", "Excel" = "xlsx")
+        )
+      })
+
+      # Conditional download button
+      output$download_button_purity <- renderUI({
+        req(input$upload_file_purity) # Ensure file is uploaded
+        downloadButton(outputId = "download_purity_estimates", label = "Download Results")
+      })
+
+      # Download handler for purity estimates
+      output$download_purity_estimates <- downloadHandler(
+        filename = function() {
+          paste("GBMPurity_estimates-", Sys.Date(), ".", input$file_format_purity, sep = "")
+        },
+        content = function(file) {
+          req(input$file_format_purity)
+          if (input$file_format_purity == "csv") {
+            write.csv(purity_estimates(), file, row.names = FALSE)
+          } else if (input$file_format_purity == "xlsx") {
+            openxlsx::write.xlsx(purity_estimates(), file, row.names = FALSE)
+          }
+        }
+      )
     }
   })
 
@@ -361,7 +394,6 @@ shinyServer(function(input, output, session) {
 
   output$download_options <- renderUI({
     req(!is.null(input$upload_file) || input$example_data)
-
 
     dropdown(
       selectInput(

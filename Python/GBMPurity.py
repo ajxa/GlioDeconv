@@ -8,11 +8,11 @@ sys.path.insert(1, 'Python')
 def pyLoadData(ext, path):
     # Switch-like structure to read the file based on its extension
     if ext == 'csv':
-        data = pd.read_csv(path, index_col=0)
+        data = pd.read_csv(path)
     elif ext == 'tsv':
-        data = pd.read_csv(path, sep='\t', index_col=0)
+        data = pd.read_csv(path, sep='\t')
     elif ext == 'xlsx':
-        data = pd.read_excel(path, engine='openpyxl', index_col=0)
+        data = pd.read_excel(path, engine='openpyxl')
     else:
         raise ValueError("Invalid file; Please upload a .csv, .tsv, or .xlsx file")
     
@@ -50,6 +50,8 @@ def tpm(X: np.ndarray, lengths: np.ndarray):
 
 def GBMPurity(data):
     
+    data.set_index(data.columns[0], inplace=True)
+    
     # Import features used for model
     gene_lengths = pd.read_csv("data/GBMPurity_genes.csv")
     genes = gene_lengths['feature_name']
@@ -70,7 +72,7 @@ def GBMPurity(data):
     
     # Create results table
     samples = data.columns
-    results = pd.DataFrame({'Sample':samples, 'Purity':y_pred.round(3)}).set_index('Sample')
+    results = pd.DataFrame({'Sample':samples, 'Purity':y_pred})
     
     return results
 

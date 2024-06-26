@@ -78,14 +78,15 @@ tabPanel(
             title = "Results",
             id = "results_tab_purity",
             value = "results_selected_purity",
+            uiOutput("file_format_purity", style = "font-size: 14px;"),
+            uiOutput("download_button_purity"),
             DT::dataTableOutput(outputId = "purity_estimates") %>%
               shinycssloaders::withSpinner(
                 image = "gifs/Busy_running.gif",
                 image.width = "50%"
-              )
+              ),
           )
         ), # END TABSETPANEL
-
         # MAIN PANEL UI END ----
       ) # END MAINPANEL
     ) # END SIDEBARLAYOUT
