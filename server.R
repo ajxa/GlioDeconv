@@ -114,8 +114,21 @@ shinyServer(function(input, output, session) {
         req(input$upload_file_purity)
         ext <- tools::file_ext(input$upload_file_purity$name)
         if (ext %in% c("csv", "tsv", "xlsx")) {
-          py_data <- py$pyLoadData(ext, input$upload_file_purity$datapath)
-          return(py_to_r(py_data))
+          tryCatch(
+            {
+              py_data <- py$pyLoadData(ext, input$upload_file_purity$datapath)
+              return(py_to_r(py_data))
+            },
+            error = function(e) {
+              showModal(modalDialog(
+                title = "Error",
+                paste("Failed to read the file:", e$message),
+                easyClose = TRUE,
+                footer = NULL
+              ))
+              NULL
+            }
+          )
         } else {
           validate("Invalid file; Please upload a .csv, .tsv, or .xlsx file")
         }
@@ -127,14 +140,82 @@ shinyServer(function(input, output, session) {
         datatable(data_purity(), options = list(dom = "lrtip"), rownames = FALSE)
       })
 
+      data_purity_processed <- reactive({
+        req(data_purity())
+        tryCatch(
+          {
+            results <- py$pyCheckData(data_purity())
+            errors <- results[[1]]
+            warnings <- results[[2]]
+            data <- results[[3]]
+
+            if (length(errors) > 0) {
+              error_message <- paste(
+                "We encountered the following error(s),
+                please check and reupload the data:<br><ul>",
+                paste(paste("<li>", errors, "</li>"), collapse = ""),
+                "</ul>"
+              )
+              showModal(modalDialog(
+                title = "Error",
+                HTML(error_message),
+                easyClose = TRUE,
+                footer = NULL
+              ))
+              return(NULL)
+            }
+
+            if (length(warnings) > 0) {
+              warning_message <- paste(
+                "We encountered the following warning(s),
+                please read and understand them before proceeding:<br><ul>",
+                paste(paste("<li>", warnings, "</li>"), collapse = ""),
+                "</ul>"
+              )
+              showModal(modalDialog(
+                title = "Warnings",
+                HTML(warning_message),
+                easyClose = FALSE,
+                footer = modalButton("Proceed")
+              ))
+              return(data)
+            }
+
+            return(data)
+          },
+          error = function(e) {
+            showModal(modalDialog(
+              title = "Error",
+              paste("Failed to process the file:", e$message),
+              easyClose = TRUE,
+              footer = NULL
+            ))
+            NULL
+          }
+        )
+      })
+
       # Compute purities on uploaded data
       purity_estimates <- reactive({
-        req(data_purity())
-        py_data <- py$GBMPurity(data_purity())
-        df <- py_to_r(py_data)
-        df$Purity <- as.numeric(df$Purity)
-        df$Purity <- round(df$Purity, 3)
-        return(df)
+        req(data_purity_processed())
+        tryCatch(
+          {
+            py_data <- py$GBMPurity(data_purity_processed())
+            df <- py_to_r(py_data)
+            df$Purity <- as.numeric(df$Purity)
+            df$Purity <- round(df$Purity, 3)
+            return(df)
+          },
+          error = function(e) {
+            showModal(modalDialog(
+              title = "Error",
+              paste("GBMPurity failed to run:", e$message),
+              easyClose = TRUE,
+              footer = NULL
+            ))
+            NULL
+          }
+        )
       })
 
       # Render purity results
@@ -169,7 +250,7 @@ shinyServer(function(input, output, session) {
           if (input$file_format_purity == "csv") {
             write.csv(purity_estimates(), file, row.names = FALSE)
           } else if (input$file_format_purity == "xlsx") {
-            openxlsx::write.xlsx(purity_estimates(), file, row.names = FALSE)
+            openxlsx::write.xlsx(purity_estimates(), file, rowNames = FALSE)
           }
         }
       )
