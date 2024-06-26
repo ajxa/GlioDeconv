@@ -108,29 +108,34 @@ shinyServer(function(input, output, session) {
     if (input$nav == "GBMPurity") {
       # Reactive expression to handle uploaded file for GBMPurity
       data_purity <- reactive({
-        if (input$example_data_purity == FALSE && is.null(input$upload_file_purity)) {
-          validate("Please upload data or run example to view")
-        }
-        req(input$upload_file_purity)
-        ext <- tools::file_ext(input$upload_file_purity$name)
-        if (ext %in% c("csv", "tsv", "xlsx")) {
-          tryCatch(
-            {
-              py_data <- py$pyLoadData(ext, input$upload_file_purity$datapath)
-              return(py_to_r(py_data))
-            },
-            error = function(e) {
-              showModal(modalDialog(
-                title = "Error",
-                paste("Failed to read the file:", e$message),
-                easyClose = TRUE,
-                footer = NULL
-              ))
-              NULL
-            }
-          )
+        if (input$example_data_purity) {
+          example <- read.csv("data/SRP027383_counts.csv")
+          return(example)
         } else {
-          validate("Invalid file; Please upload a .csv, .tsv, or .xlsx file")
+          if (input$example_data_purity == FALSE && is.null(input$upload_file_purity)) {
+            validate("Please upload data or run example to view")
+          }
+          req(input$upload_file_purity)
+          ext <- tools::file_ext(input$upload_file_purity$name)
+          if (ext %in% c("csv", "tsv", "xlsx")) {
+            tryCatch(
+              {
+                py_data <- py$pyLoadData(ext, input$upload_file_purity$datapath)
+                return(py_to_r(py_data))
+              },
+              error = function(e) {
+                showModal(modalDialog(
+                  title = "Error",
+                  paste("Failed to read the file:", e$message),
+                  easyClose = TRUE,
+                  footer = NULL
+                ))
+                NULL
+              }
+            )
+          } else {
+            validate("Invalid file; Please upload a .csv, .tsv, or .xlsx file")
+          }
         }
       })
 
