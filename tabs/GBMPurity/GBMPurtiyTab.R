@@ -74,6 +74,8 @@ tabPanel(
                 image.width = "50%"
               )
           ),
+
+          # Results
           tabPanel(
             title = "Results",
             id = "results_tab_purity",
@@ -86,6 +88,8 @@ tabPanel(
                 image.width = "50%"
               ),
           ),
+
+          # Plot
           tabPanel(
             title = "Plot",
             id = "plot_tab_purity",
@@ -98,7 +102,15 @@ tabPanel(
             br(),
             uiOutput("file_format_plot", style = "font-size: 14px;"),
             uiOutput("download_button_plot")
-          )
+          ),
+
+          # About
+          tabPanel(
+            title = "About",
+            id = "about_tab_purity",
+            value = "about_selected_purity",
+            uiOutput("about_content")
+          ),
         ), # END TABSETPANEL
         # MAIN PANEL UI END ----
       ) # END MAINPANEL

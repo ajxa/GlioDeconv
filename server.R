@@ -323,6 +323,10 @@ shinyServer(function(input, output, session) {
           }
         }
       )
+
+      output$about_content <- renderUI({
+        includeMarkdown("tabs/GBMPurity/help/about_GBMPurity.rmd")
+      })
     }
   })
 
