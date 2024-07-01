@@ -3,4 +3,4 @@ title: "Run Example Data"
 output: html_document
 ---
 
-The example data are comprised of raw count gene expression data from 18 primary, grade IV, GBM tumour samples obtained from [The Cancer Genome Atlas (TGCA) Study of Glioblastoma](https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga/studied-cancers/glioblastoma)
+The example data is raw count gene expression data from 46 primary, IDHwt, GBM tumour samples obtained from [The GLASS Consortium portal](https://www.synapse.org/Synapse:syn17038081).
