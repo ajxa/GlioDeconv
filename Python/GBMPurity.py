@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import torch
+import matplotlib.pyplot as plt 
+import seaborn as sns
 
 import sys
 sys.path.insert(1, 'Python')
@@ -138,4 +140,3 @@ def GBMPurity(data):
     samples = data.index.values
     results = pd.DataFrame({'Sample':samples, 'Purity':y_pred})
     return results
-

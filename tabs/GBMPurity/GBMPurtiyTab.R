@@ -85,6 +85,19 @@ tabPanel(
                 image = "gifs/Busy_running.gif",
                 image.width = "50%"
               ),
+          ),
+          tabPanel(
+            title = "Plot",
+            id = "plot_tab_purity",
+            value = "plot_selected_purity",
+            plotOutput("purity_plot", width = "50%") %>%
+              shinycssloaders::withSpinner(
+                image = "gifs/Busy_running.gif",
+                image.width = "50%"
+              ),
+            br(),
+            uiOutput("file_format_plot", style = "font-size: 14px;"),
+            uiOutput("download_button_plot")
           )
         ), # END TABSETPANEL
         # MAIN PANEL UI END ----

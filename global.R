@@ -27,6 +27,7 @@ library(tinyscalop)
 library(openxlsx)
 library(reticulate)
 library(shinymanager)
+library(ggbeeswarm)
 
 # Allowing use of Python
 use_condaenv("GBMPurity")

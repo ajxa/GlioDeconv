@@ -259,6 +259,71 @@ shinyServer(function(input, output, session) {
           }
         }
       )
+
+      # Display purity plot
+      output$purity_plot <- renderPlot(
+        {
+          req(purity_estimates())
+
+          ggplot(purity_estimates(), aes(y = Purity, x = 1)) +
+            geom_violin(fill = "#629dff", alpha = 0.2, color = NA) +
+            geom_beeswarm(color = "#629dff", size = 1.5, cex = 1.5) +
+            scale_y_continuous(limits = c(-0.02, 1.02)) +
+            labs(y = "GBMPurity") +
+            theme_minimal() +
+            theme(
+              axis.title.x = element_blank(),
+              axis.text.x = element_blank(),
+              axis.ticks.x = element_blank(),
+              panel.grid.major.x = element_blank(),
+              panel.grid.minor.x = element_blank()
+            )
+        },
+        res = 96,
+      )
+
+      # UI for download button
+      output$download_button_plot <- renderUI({
+        downloadButton("download_plot", "Download Plot")
+      })
+
+      # Download handler for the plot
+
+      # UI for file format selection
+      output$file_format_plot <- renderUI({
+        selectInput("plot_download_format", "Select format:",
+          choices = c("PNG", "TIFF", "PDF")
+        )
+      })
+
+      output$download_plot <- downloadHandler(
+        filename = function() {
+          paste("GBMPurity_plot-", Sys.Date(), ".", tolower(input$plot_download_format), sep = "")
+        },
+        content = function(file) {
+          plot <- ggplot(purity_estimates(), aes(y = Purity, x = 1)) +
+            geom_violin(fill = "#629dff", alpha = 0.2, color = NA) +
+            geom_beeswarm(color = "#629dff", size = 2, cex = 1.5) +
+            scale_y_continuous(limits = c(-0.02, 1.02)) +
+            labs(y = "GBMPurity") +
+            theme_minimal() +
+            theme(
+              axis.title.x = element_blank(),
+              axis.text.x = element_blank(),
+              axis.ticks.x = element_blank(),
+              panel.grid.major.x = element_blank(),
+              panel.grid.minor.x = element_blank()
+            )
+
+          if (input$plot_download_format == "PNG") {
+            ggsave(file, plot, width = 4, height = 6, units = "in", dpi = 300, device = "png")
+          } else if (input$plot_download_format == "TIFF") {
+            ggsave(file, plot, width = 4, height = 6, units = "in", dpi = 300, device = "tiff")
+          } else if (input$plot_download_format == "PDF") {
+            ggsave(file, plot, width = 4, height = 6, units = "in", device = "pdf")
+          }
+        }
+      )
     }
   })
 
