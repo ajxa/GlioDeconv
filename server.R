@@ -109,7 +109,7 @@ shinyServer(function(input, output, session) {
       # Reactive expression to handle uploaded file for GBMPurity
       data_purity <- reactive({
         if (input$example_data_purity) {
-          example <- read.csv("data/SRP027383_counts.csv")
+          example <- read.csv("data/GBMPurity-example-input.csv")
           return(example)
         } else {
           if (input$example_data_purity == FALSE && is.null(input$upload_file_purity)) {
@@ -282,12 +282,11 @@ shinyServer(function(input, output, session) {
         res = 96,
       )
 
+      # Beeswarm plot
       # UI for download button
       output$download_button_plot <- renderUI({
         downloadButton("download_plot", "Download Plot")
       })
-
-      # Download handler for the plot
 
       # UI for file format selection
       output$file_format_plot <- renderUI({
