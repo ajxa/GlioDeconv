@@ -38,9 +38,6 @@ COPY ./renv.lock ./renv.lock
 RUN Rscript -e 'install.packages("renv")'
 RUN Rscript -e 'renv::restore()'
 
-# Installing GBMPuirty R packages
-RUN R -e "install.packages(c('shinymanager=1.0.410', 'reticulate=1.37.0', 'ggbeeswarm=0.7.2'), repos='https://cran.rstudio.com/')"
-
 COPY . /srv/shiny-server
 
 USER shiny

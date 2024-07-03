@@ -1,5 +1,5 @@
 # this is a rough and ready bash script with steps used to build 
-# push this container to the private azure container registry
+# and deploy a container to a private azure container registry 
 
 # here we run docker build to create the container image
 # using the dockerfile specified in the current directory
