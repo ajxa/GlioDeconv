@@ -6,7 +6,8 @@ RUN apt-get update && apt-get --no-install-recommends install -y \
     libssl-dev \
     libxml2-dev \
     libharfbuzz-dev \
-    libfribidi-dev && \
+    libfribidi-dev \
+    libtiff-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
     
@@ -17,7 +18,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install renv and restore the R packages using the .lock file
-RUN R -e "install.packages('renv', repos = c(CRAN = 'https://cloud.r-project.org'))"
+RUN R -e "install.packages('renv', repos = c(CRAN = 'https://packagemanager.posit.co/cran/__linux__/focal/latest'))"
 COPY ./renv.lock ./renv.lock
 # approach one
 ENV RENV_PATHS_LIBRARY renv/library
