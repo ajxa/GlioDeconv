@@ -1,25 +1,26 @@
-# Install R version 3.5
-FROM rocker/shiny:latest
+# Install the R(4.2.3) image with shiny server
+FROM rocker/shiny:4.2.3
 
 # Install Ubuntu packages
 RUN apt-get update && apt-get --no-install-recommends install -y \
     libssl-dev \
-    libxml2-dev
-
+    libxml2-dev \
+    libharfbuzz-dev \
+    libfribidi-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+    
+# Update the installed Ubuntu packages
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get clean
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install R packages that are required using renv
+# Install renv and restore the R packages using the .lock file
 RUN R -e "install.packages('renv', repos = c(CRAN = 'https://cloud.r-project.org'))"
 COPY ./renv.lock ./renv.lock
 # approach one
-#ENV RENV_PATHS_LIBRARY renv/library
-# approach two
-RUN mkdir -p renv
-COPY .Rprofile .Rprofile
-COPY renv/activate.R renv/activate.R
-COPY renv/settings.json renv/settings.json
+ENV RENV_PATHS_LIBRARY renv/library
 RUN R -e "renv::restore()"
 
 # Copy the Shiny server app code
