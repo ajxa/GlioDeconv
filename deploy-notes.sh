@@ -13,7 +13,7 @@ docker run -p 3838:3838 gbmdeconvoluter:test
 
 # Once the container is running we can check this by opening a web browser 
 # and opening the exposed port
-http://localhost:3838
+http://
 
 # next we use docker login to connect to our private registry
 docker login gbmdeconvoluter.azurecr.io
