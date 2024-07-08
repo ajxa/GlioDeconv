@@ -1,0 +1,63 @@
+---
+title: "About GBMPurity"
+output: html_fragment
+---
+
+## About GBMPurity
+
+GBMPurity is a machine learning model designed to estimate the purity of bulk RNA-seq primary IDH-wildtype Glioblastoma (GBM) samples. In this context, purity refers to the proportion of malignant cells within a tumour sample.
+
+### Model Architecture and Training
+
+Our model is a multi-layer perceptron trained on simulated pseudobulk tumours of known purity. These simulations were created using the GBmap single-cell resource ([Ruiz-Moreno et al., 2022](https://doi.org/10.1101/2022.08.27.505439)).
+
+For a detailed description of GBMPurity's architecture, training methodology, and performance metrics, please refer to our [preprint](https://www.biorxiv.org/).
+
+<image src="GBMPurity.png" width="100%"/>
+
+### How GBMPurity Works
+
+1. **Data Input**: Upload a raw count matrix containing samples (columns) and genes (rows, using HGNC symbols). Alternatively, use our provided example dataset.
+
+2. **Data Preprocessing**: The tool automatically filters and transforms the input data to prepare it for analysis.
+
+3. **Purity Estimation**: The preprocessed data is fed into the GBMPurity model, which generates purity estimates for each sample.
+
+4. **Results**: Purity estimates are presented in two formats:
+   - A downloadable results table for use in downstream analysis
+   - A beeswarm plot for visual representation of the purity distribution
+
+### Development and Support
+
+GBMPurity is a product of the Glioma Genomics group at the University of Leeds.
+
+For inquiries, support, and feedback, please contact us at: scmpht@leeds.ac.uk
+
+### Disclaimers
+
+- GBMPurity is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement.
+- This tool is intended for research purposes only and should not be used for clinical decision making.
+- While we strive for accuracy, users should be aware that no computational model is perfect. Always interpret results in the context of our reported methods and performance.
+- GBMPurity was built using primary IDH-wildtype Glioblastoma, and thus is not suitable for inference on any other tissue type.
+- We are not responsible for any actions taken based on the output of this tool.
+
+### Citation
+
+This tool is free to use, but we kindly request that you cite our paper in any published work that uses GBMPurity:
+
+> Thomas, M., <i>et al.</i> (2024). GBMPurity: A Machine Learning Tool for Estimating Glioblastoma Tumour Purity from Bulk RNA-seq Data. *[Journal Name]*, *[Volume]*(Issue), [Page numbers]. DOI: [DOI number]
+
+For use in bibliographic management software, you can use the following BibTeX entry:
+
+    @article{Thomas2024GBMPurity,
+      title={GBMPurity: A Machine Learning Tool for Estimating Glioblastoma Tumour Purity from Bulk RNA-seq Data},
+      author={Thomas, M. and [Other Authors]},
+      journal={[Journal Name]},
+      volume={[Volume]},
+      number={[Issue]},
+      pages={[Page numbers]},
+      year={2024},
+      publisher={[Publisher]},
+      doi={[DOI number]}
+    }
+

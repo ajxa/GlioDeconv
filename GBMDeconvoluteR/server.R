@@ -25,6 +25,18 @@ server <- function(input, output, session) {
     )
   })  
   
+  # File Uploads purity
+  observeEvent(input$upload_help_purity, {
+    showModal(
+      modalDialog(
+        title = "File Uploads",
+        includeMarkdown("tabs/GBMpurity/help/help_uploading_purity.Rmd"),
+        footer = NULL,
+        easyClose = TRUE,
+        fade = TRUE
+      )
+    )
+  })
   
   # Example data
   observeEvent(input$run_example_help, {
@@ -39,6 +51,18 @@ server <- function(input, output, session) {
     )
   })  
   
+  # Example data purity
+  observeEvent(input$run_example_help_purity, {
+    showModal(
+      modalDialog(
+        title = "Run Example Data",
+        includeMarkdown("tabs/GBMPurity/help/help_run_example_purity.Rmd"),
+        footer = NULL,
+        easyClose = TRUE,
+        fade = TRUE
+      )
+    )
+  })
   
   # Marker Gene List
   observeEvent(input$marker_genelist_help, {
@@ -53,7 +77,6 @@ server <- function(input, output, session) {
     )
   })  
   
-  
   # Tumour Intrinsic Genes
   observeEvent(input$TI_genes_help, {
   
@@ -66,6 +89,245 @@ server <- function(input, output, session) {
                    fade = TRUE)
       )
   })  
+  
+# GBMPURITY TAB ----------------------------------------------------------------
+  
+  # URL navigation
+  observe({
+    path <- sub("/", "", session$clientData$url_pathname)
+    updateNavbarPage(session, "nav", selected = path)
+  })
+  
+  observeEvent(input$nav, {
+    path <- paste0("/", input$nav)
+    session$sendCustomMessage(type = "setPath", path)
+  })
+  
+  # observe({
+  #   if (input$nav == "GBMPurity") {
+  #     # Reactive expression to handle uploaded file for GBMPurity
+  #     data_purity <- reactive({
+  #       if (input$example_data_purity) {
+  #         example <- read.csv("data/GBMPurity-example-input.csv")
+  #         return(example)
+  #       } else {
+  #         if (input$example_data_purity == FALSE && is.null(input$upload_file_purity)) {
+  #           validate("Please upload data or run example to view")
+  #         }
+  #         req(input$upload_file_purity)
+  #         ext <- tools::file_ext(input$upload_file_purity$name)
+  #         if (ext %in% c("csv", "tsv", "xlsx")) {
+  #           tryCatch(
+  #             {
+  #               py_data <- py$pyLoadData(ext, input$upload_file_purity$datapath)
+  #               return(py_to_r(py_data))
+  #             },
+  #             error = function(e) {
+  #               showModal(modalDialog(
+  #                 title = "Error",
+  #                 paste("Failed to read the file:", e$message),
+  #                 easyClose = TRUE,
+  #                 footer = NULL
+  #               ))
+  #               NULL
+  #             }
+  #           )
+  #         } else {
+  #           validate("Invalid file; Please upload a .csv, .tsv, or .xlsx file")
+  #         }
+  #       }
+  #     })
+  #     
+  #     # Render input for GBMPurity
+  #     output$uploaded_data_purity <- renderDT({
+  #       req(data_purity())
+  #       datatable(data_purity(), options = list(dom = "lrtip"), rownames = FALSE)
+  #     })
+  #     
+  #     data_purity_processed <- reactive({
+  #       req(data_purity())
+  #       tryCatch(
+  #         {
+  #           results <- py$pyCheckData(data_purity())
+  #           errors <- results[[1]]
+  #           warnings <- results[[2]]
+  #           data <- results[[3]]
+  #           
+  #           if (length(errors) > 0) {
+  #             error_message <- paste(
+  #               "We encountered the following error(s),
+  #               please check and reupload the data:<br><ul>",
+  #               paste(paste("<li>", errors, "</li>"), collapse = ""),
+  #               "</ul>"
+  #             )
+  #             showModal(modalDialog(
+  #               title = "Error",
+  #               HTML(error_message),
+  #               easyClose = TRUE,
+  #               footer = NULL
+  #             ))
+  #             return(NULL)
+  #           }
+  #           
+  #           if (length(warnings) > 0) {
+  #             warning_message <- paste(
+  #               "We encountered the following warning(s),
+  #               please read and understand them before proceeding:<br><ul>",
+  #               paste(paste("<li>", warnings, "</li>"), collapse = ""),
+  #               "</ul>"
+  #             )
+  #             showModal(modalDialog(
+  #               title = "Warnings",
+  #               HTML(warning_message),
+  #               easyClose = FALSE,
+  #               footer = modalButton("Proceed")
+  #             ))
+  #             return(data)
+  #           }
+  #           
+  #           return(data)
+  #         },
+  #         error = function(e) {
+  #           showModal(modalDialog(
+  #             title = "Error",
+  #             paste("Failed to process the file:", e$message),
+  #             easyClose = TRUE,
+  #             footer = NULL
+  #           ))
+  #           NULL
+  #         }
+  #       )
+  #     })
+  #     
+  #     # Compute purities on uploaded data
+  #     purity_estimates <- reactive({
+  #       req(data_purity_processed())
+  #       tryCatch(
+  #         {
+  #           py_data <- py$GBMPurity(data_purity_processed())
+  #           df <- py_to_r(py_data)
+  #           df$Purity <- as.numeric(df$Purity)
+  #           df$Purity <- round(df$Purity, 3)
+  #           return(df)
+  #         },
+  #         error = function(e) {
+  #           showModal(modalDialog(
+  #             title = "Error",
+  #             paste("GBMPurity failed to run:", e$message),
+  #             easyClose = TRUE,
+  #             footer = NULL
+  #           ))
+  #           NULL
+  #         }
+  #       )
+  #     })
+  #     
+  #     # Render purity results
+  #     output$purity_estimates <- renderDT({
+  #       req(purity_estimates())
+  #       datatable(purity_estimates(), options = list(dom = "lrtip"), rownames = FALSE)
+  #     })
+  #     
+  #     # Conditional file format selection input
+  #     output$file_format_purity <- renderUI({
+  #       req(input$upload_file_purity) # Ensure file is uploaded
+  #       selectInput(
+  #         inputId = "file_format_purity",
+  #         label = "Download file format",
+  #         choices = c("CSV" = "csv", "Excel" = "xlsx")
+  #       )
+  #     })
+  #     
+  #     # Conditional download button
+  #     output$download_button_purity <- renderUI({
+  #       req(input$upload_file_purity) # Ensure file is uploaded
+  #       downloadButton(outputId = "download_purity_estimates", label = "Download Results")
+  #     })
+  #     
+  #     # Download handler for purity estimates
+  #     output$download_purity_estimates <- downloadHandler(
+  #       filename = function() {
+  #         paste("GBMPurity_estimates-", Sys.Date(), ".", input$file_format_purity, sep = "")
+  #       },
+  #       content = function(file) {
+  #         req(input$file_format_purity)
+  #         if (input$file_format_purity == "csv") {
+  #           write.csv(purity_estimates(), file, row.names = FALSE)
+  #         } else if (input$file_format_purity == "xlsx") {
+  #           openxlsx::write.xlsx(purity_estimates(), file, rowNames = FALSE)
+  #         }
+  #       }
+  #     )
+  #     
+  #     # Display purity plot
+  #     output$purity_plot <- renderPlot(
+  #       {
+  #         req(purity_estimates())
+  #         
+  #         ggplot(purity_estimates(), aes(y = Purity, x = 1)) +
+  #           geom_violin(fill = "#629dff", alpha = 0.2, color = NA) +
+  #           geom_beeswarm(color = "#629dff", size = 1.5, cex = 1.5) +
+  #           scale_y_continuous(limits = c(-0.02, 1.02)) +
+  #           labs(y = "GBMPurity") +
+  #           theme_minimal() +
+  #           theme(
+  #             axis.title.x = element_blank(),
+  #             axis.text.x = element_blank(),
+  #             axis.ticks.x = element_blank(),
+  #             panel.grid.major.x = element_blank(),
+  #             panel.grid.minor.x = element_blank()
+  #           )
+  #       },
+  #       res = 96,
+  #     )
+  #     
+  #     # Beeswarm plot
+  #     # UI for download button
+  #     output$download_button_plot <- renderUI({
+  #       downloadButton("download_plot", "Download Plot")
+  #     })
+  #     
+  #     # UI for file format selection
+  #     output$file_format_plot <- renderUI({
+  #       selectInput("plot_download_format", "Select format:",
+  #                   choices = c("PNG", "TIFF", "PDF")
+  #       )
+  #     })
+  #     
+  #     output$download_plot <- downloadHandler(
+  #       filename = function() {
+  #         paste("GBMPurity_plot-", Sys.Date(), ".", tolower(input$plot_download_format), sep = "")
+  #       },
+  #       content = function(file) {
+  #         plot <- ggplot(purity_estimates(), aes(y = Purity, x = 1)) +
+  #           geom_violin(fill = "#629dff", alpha = 0.2, color = NA) +
+  #           geom_beeswarm(color = "#629dff", size = 2, cex = 1.5) +
+  #           scale_y_continuous(limits = c(-0.02, 1.02)) +
+  #           labs(y = "GBMPurity") +
+  #           theme_minimal() +
+  #           theme(
+  #             axis.title.x = element_blank(),
+  #             axis.text.x = element_blank(),
+  #             axis.ticks.x = element_blank(),
+  #             panel.grid.major.x = element_blank(),
+  #             panel.grid.minor.x = element_blank()
+  #           )
+  #         
+  #         if (input$plot_download_format == "PNG") {
+  #           ggsave(file, plot, width = 4, height = 6, units = "in", dpi = 300, device = "png")
+  #         } else if (input$plot_download_format == "TIFF") {
+  #           ggsave(file, plot, width = 4, height = 6, units = "in", dpi = 300, device = "tiff")
+  #         } else if (input$plot_download_format == "PDF") {
+  #           ggsave(file, plot, width = 4, height = 6, units = "in", device = "pdf")
+  #         }
+  #       }
+  #     )
+  #     
+      output$about_content <- renderUI({
+        includeMarkdown("tabs/GBMPurity/help/about_GBMPurity.rmd")
+      })
+  # }
+  # })
   
 # DYNAMICALLY GENERATED RESET BUTTON -------------------------------------------
 

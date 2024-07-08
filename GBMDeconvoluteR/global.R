@@ -1,7 +1,9 @@
-#' global.R for GBMDeconvoluteR
-#
-# GBMDeconvoluteR is free software; you can redistribute it and/or 
-# modify it under the terms of the GNU General Public License as published by 
+# This is the global script for GBMDeconvoluteR and is used to load the 
+# necessary packages and datasets, set global options, and define the 
+# panel_div function which generates the panels found on the home and about tabs. 
+# 
+# GBMDeconvoluteR is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published by
 # the Free SoftwareFoundation; either version 3 of the License, or (at your option) any later
 # version.
 #
@@ -12,8 +14,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program; if not, see <http://www.gnu.org/licenses/>.
 
-# PACKAGES ----
-
+# PACKAGES ---------------------------------------------------------------------
 library(shiny)
 library(shinyBS)
 library(shinyjs)
@@ -25,8 +26,17 @@ library(DT)
 library(MCPcounter)
 library(tinyscalop)
 library(openxlsx)
+library(reticulate)
+library(shinymanager)
+library(ggbeeswarm)
 
-# GLOABAL OPTIONS ----
+# PYTHON ENVIRONMENT -----------------------------------------------------------
+
+# Allowing use of Python
+# use_condaenv("GBMPurity")
+# source_python("./Python/GBMPurity.py")
+
+# DT TABLE OPTIONS -------------------------------------------------------------
 
 # Disable graphical rendering by the Cairo package, if it is installed
 options(shiny.usecairo = TRUE)
@@ -65,54 +75,7 @@ options(
 
 
 
-# LOAD MULTIPLE DATASETS FUNCTION ----
-
-# Function which reads in multiple datasets at once
-# load_datasets <- function(x){
-# 
-#   tryCatch(                       # Applying tryCatch
-#     
-#     expr = {                      # Specifying expression
-#       
-#       assign(x = tools::file_path_sans_ext(basename(x)),
-#              value = readRDS(x),
-#              envir = .GlobalEnv) 
-#       
-#       
-#       message(
-#         
-#         crayon::green("Loaded", tools::file_path_sans_ext(basename(x))),
-#         
-#         appendLF = TRUE
-#         
-#         )
-#       
-#     },
-#     
-#     error = function(e){          # Specifying error message
-#       
-#       message(
-#         
-#         crayon::red(tools::file_path_sans_ext(basename(x)), 
-#                     "Could Not Be Loaded!"),
-#         
-#         appendLF = TRUE
-#         
-#         )
-#     },
-#     
-#     warning = function(w){        # Specifying warning message
-#       message("There was a warning message.")
-#     }
-#   )
-#   
-# }
-
-# load_datasets usage
-# plyr::l_ply(indata, load_datasets)
-
-# LOAD DATASETS ----
-
+# LOAD DATASETS ----------------------------------------------------------------
 gene_markers <- list()
 
 gene_markers$ajaib2022 <- readRDS("data/Ajaib_et_al_2022_markers.rds")
@@ -140,8 +103,7 @@ plot_cols <- readRDS("data/plot_colors.rds")
 # Plot order
 plot_order <- readRDS("data/plot_order.rds")
 
-# PANEL DIVS ----
-
+# GENERATE PANEL DIV FUNCTION --------------------------------------------------
 # Generates the panels found on the home and about tabs
 
 panel_div <-function(class_type, panel_title, content) {
@@ -150,4 +112,4 @@ panel_div <-function(class_type, panel_title, content) {
               "</h3></div><div class='panel-body'>", content,  "</div></div>", sep=""))
 }
 
-# END ----
+# END --------------------------------------------------------------------------
