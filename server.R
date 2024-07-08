@@ -1,9 +1,8 @@
 # This script contains the server logic for the GBMDeconvoluteR Shiny web application.
 # You can run the application by clicking 'Run App' above.
 
-
 shinyServer(function(input, output, session) {
-  # SESSION INFO -----------------------------------------------------------------
+  # SESSION INFO ---------------------------------------------------------------
 
   session$onSessionEnded(stopApp)
 
@@ -11,7 +10,7 @@ shinyServer(function(input, output, session) {
     capture.output(sessionInfo())
   })
 
-  # HELP MODALS  -----------------------------------------------------------------
+  # HELP MODALS  ---------------------------------------------------------------
 
   # File Uploads
   observeEvent(input$upload_help, {
@@ -91,7 +90,7 @@ shinyServer(function(input, output, session) {
     )
   })
 
-  ### GBMPurity Tab ----------------------------------------------------------------
+  # GBMPURITY TAB --------------------------------------------------------------
 
   # URL navigation
   observe({
@@ -330,7 +329,7 @@ shinyServer(function(input, output, session) {
     }
   })
 
-  # DYNAMICALLY GENERATED BUTTON -------------------------------------------------
+  # DYNAMICALLY GENERATED BUTTON -----------------------------------------------
 
   # Reactivity required to display the Run and reset buttons
   output$finishedUploading <- reactive({
@@ -340,7 +339,7 @@ shinyServer(function(input, output, session) {
   outputOptions(output, "finishedUploading", suspendWhenHidden = FALSE)
 
 
-  # USER UPLOADED DATA -----------------------------------------------------------
+  # USER UPLOADED DATA ---------------------------------------------------------
 
   data <- reactive({
     if (input$example_data == FALSE && is.null(input$upload_file)) {
@@ -362,7 +361,6 @@ shinyServer(function(input, output, session) {
   input_check <- reactive({
     check_user_data(data())
   })
-
 
   # Logic for the file input error modals
   observeEvent(!is.null(data()),
@@ -409,7 +407,7 @@ shinyServer(function(input, output, session) {
     server = TRUE
   )
 
-  # DECONVOLUTION MARKERS -------------------------------------------------------
+  # DECONVOLUTION MARKERS ------------------------------------------------------
 
   cleaned_data <- reactive({
     req(is.null(input_check()))
@@ -481,7 +479,7 @@ shinyServer(function(input, output, session) {
     server = TRUE
   )
 
-  # DECONVOLUTION SCORES ---------------------------------------------------------
+  # DECONVOLUTION SCORES -------------------------------------------------------
 
   scores <- reactive({
     req(get_markers(), cancelOutput = TRUE)
@@ -503,7 +501,7 @@ shinyServer(function(input, output, session) {
     server = TRUE
   )
 
-  # PLOT SCORES ------------------------------------------------------------------
+  # PLOT SCORES ----------------------------------------------------------------
 
   plot_output <- reactive({
     req(scores())
@@ -544,7 +542,7 @@ shinyServer(function(input, output, session) {
     width = scale_plot_width,
     height = scale_plot_height
   )
-  # DOWNLOAD PLOT ---------------------------------------------------------------
+  # DOWNLOAD PLOT --------------------------------------------------------------
 
   output$download_options <- renderUI({
     req(!is.null(input$upload_file) || input$example_data)
@@ -675,4 +673,6 @@ shinyServer(function(input, output, session) {
       #        limitsize = FALSE)
     }
   )
+  
+  # END ------------------------------------------------------------------------
 })

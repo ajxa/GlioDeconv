@@ -1,4 +1,3 @@
-# Install R version 3.5
 FROM rocker/shiny:latest
 
 # Install Ubuntu packages
