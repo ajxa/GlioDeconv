@@ -23,53 +23,53 @@
 
 #######################################################
 
-install_GBMDeconvoluteR <- function() {
-  
-  if (getRversion() < '4.0.0') stop("GBMDeconvoluteR requires R version 4.0.0 or greater.")
-  
-  
-  msg <- "Note: this will install or update packages needed to run GBMDeconvoluteR Do you want to continue?"
-  
-  
-  continue <- select.list(choices = c("Yes", "No"), 
-                          title = msg, 
-                          graphics = FALSE)
-  
-  
-  if (continue == "No") {
-    message("Installation canceled by user.")
-    return(invisible(NULL))
-  }
-  
-  # install needed packages from CRAN
-  pkg <- c("shiny", "shinyBS", "tidyverse", "DT", "openxlsx",
-           "markdown","devtools","curl")
-  
-  new.pkg <- pkg[!(pkg %in% installed.packages())]
-  
-  if (length(new.pkg)) {
-    install.packages(new.pkg, dependencies=TRUE)
-  }
-  
-  update.packages(pkg[!(pkg %in% new.pkg)])
-
-  # install needed packages from Bioconductor
-  # bioc <- c()
-  # 
-  # if(!(bioc %in% installed.packages())){
-  #   source("http://bioconductor.org/biocLite.R")
-  #   BiocManager::install(pkgs = bioc)
-  # }
-
-  # install needed packages from Github
-  
-  devtools::install_github("ajxa/GBMDeconvoluteR")
-  devtools::install_github("ebecht/MCPcounter")
-  
-
-  message("\n All set. \n You might need to restart R before using GBMDeconvoluteR \n")
-  
-  return(invisible(NULL))
-}
-
-install_GBMDeconvoluteR()
+# install_GBMDeconvoluteR <- function() {
+#   
+#   if (getRversion() < '4.0.0') stop("GBMDeconvoluteR requires R version 4.0.0 or greater.")
+#   
+#   
+#   msg <- "Note: this will install or update packages needed to run GBMDeconvoluteR Do you want to continue?"
+#   
+#   
+#   continue <- select.list(choices = c("Yes", "No"), 
+#                           title = msg, 
+#                           graphics = FALSE)
+#   
+#   
+#   if (continue == "No") {
+#     message("Installation canceled by user.")
+#     return(invisible(NULL))
+#   }
+#   
+#   # install needed packages from CRAN
+#   pkg <- c("shiny", "shinyBS", "tidyverse", "DT", "openxlsx",
+#            "markdown","devtools","curl")
+#   
+#   new.pkg <- pkg[!(pkg %in% installed.packages())]
+#   
+#   if (length(new.pkg)) {
+#     install.packages(new.pkg, dependencies=TRUE)
+#   }
+#   
+#   update.packages(pkg[!(pkg %in% new.pkg)])
+# 
+#   # install needed packages from Bioconductor
+#   # bioc <- c()
+#   # 
+#   # if(!(bioc %in% installed.packages())){
+#   #   source("http://bioconductor.org/biocLite.R")
+#   #   BiocManager::install(pkgs = bioc)
+#   # }
+# 
+#   # install needed packages from Github
+#   
+#   devtools::install_github("ajxa/GBMDeconvoluteR")
+#   devtools::install_github("ebecht/MCPcounter")
+#   
+# 
+#   message("\n All set. \n You might need to restart R before using GBMDeconvoluteR \n")
+#   
+#   return(invisible(NULL))
+# }
+# 
+# install_GBMDeconvoluteR()
