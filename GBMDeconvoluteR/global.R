@@ -33,8 +33,9 @@ library(ggbeeswarm)
 # PYTHON ENVIRONMENT -----------------------------------------------------------
 
 # Allowing use of Python
+use_virtualenv("../GBMPurity", required = TRUE)
 # use_condaenv("GBMPurity")
-# source_python("./Python/GBMPurity.py")
+source_python("Python/GBMPurity.py")
 
 # DT TABLE OPTIONS -------------------------------------------------------------
 

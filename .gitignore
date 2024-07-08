@@ -51,5 +51,11 @@ vignettes/*.pdf
 # Renv files
 renv/
 
+# Python
+*.pyc
+*.ipynb
 
+# Virtual environment 
+environment.yml 
+GBMPurity/
 

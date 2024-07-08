@@ -11,9 +11,9 @@ docker build --platform linux/x86_64 -t gbmdeconvoluter:test .
 # we can run a container instance of the image with
 docker run -p 3838:3838 gbmdeconvoluter:test
 
-# Once the container is running we can check this by opening a web browser 
-# and opening the exposed port
-http://
+# Once the container is running we can check the application loads and functions correctly	
+# by opening it in a web browser at the exposed port location:
+http://localhost:3838/
 
 # next we use docker login to connect to our private registry
 docker login gbmdeconvoluter.azurecr.io
