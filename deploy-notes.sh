@@ -6,10 +6,12 @@
 # we give it a name and a tag with the format name:tag
 # The platform tag ensures it can be built locally on a machine which uses Mac Silicon
 docker build --platform linux/x86_64 -t gbmdeconvoluter:test .
+docker build --platform linux/x86_64 -t gbmdeconvoluter:final_test .
 
 # once built this image is available locally at the port we exposed 3838
 # we can run a container instance of the image with
 docker run -p 3838:3838 gbmdeconvoluter:test
+docker run -p 3838:3838 gbmdeconvoluter:final_test
 
 # Once the container is running we can check the application loads and functions correctly	
 # by opening it in a web browser at the exposed port location:

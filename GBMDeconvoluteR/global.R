@@ -31,10 +31,13 @@ library(shinymanager)
 library(ggbeeswarm)
 
 # PYTHON ENVIRONMENT -----------------------------------------------------------
+# Set the virtual environment path based on where the code is being run from
+if(Sys.info()[["sysname"]] == "Linux") {
+  use_virtualenv("/opt/GBMPurity", required = TRUE)
+} else {
+  use_virtualenv("../GBMPurity", required = TRUE)
+}
 
-# Allowing use of Python
-use_virtualenv("../GBMPurity", required = TRUE)
-# use_condaenv("GBMPurity")
 source_python("Python/GBMPurity.py")
 
 # DT TABLE OPTIONS -------------------------------------------------------------
