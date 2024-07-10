@@ -25,11 +25,11 @@ ui <-  navbarPage(
     collapsible = TRUE,
     windowTitle = "GBMDeconvoluteR",
     fluid = TRUE,
-    footer = includeHTML("tools/footer.html"),
     id = "nav",
     source("tabs/Home/homeTab.R", local = TRUE)$value,
     source("tabs/Run/runTab.R", local = TRUE)$value,
     source("tabs/About/aboutTab.R", local = TRUE)$value,
-    source("tabs/GBMPurity/GBMPurtiyTab.R", local = TRUE)$value
+    source("tabs/GBMPurity/GBMPurtiyTab.R", local = TRUE)$value,
+    footer = includeHTML("tools/footer.html")
   )
 

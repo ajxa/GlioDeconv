@@ -30,7 +30,7 @@ server <- function(input, output, session) {
     showModal(
       modalDialog(
         title = "File Uploads",
-        includeMarkdown("tabs/GBMpurity/help/help_uploading_purity.Rmd"),
+        includeMarkdown("tabs/GBMPurity/help/help_uploading_purity.Rmd"),
         footer = NULL,
         easyClose = TRUE,
         fade = TRUE

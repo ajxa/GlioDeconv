@@ -2,7 +2,6 @@
 # this page consists of a tab panel where the options are set on a sidebar panel
 # which will be on the left side of the page and then the results will be displayed
 # on a main tabbed panel on the right hand side of the page.
-
 tabPanel(
   
   title = "Run", icon = icon("running", lib = "font-awesome"),
@@ -52,22 +51,6 @@ tabPanel(
                                        value = FALSE,
                                        status = "primary"),
           
-          # Code for conditional reset button
-          
-          # conditionalPanel(condition = "output.finishedUploading || input.example_data",
-          # 
-          #                  br(),
-          #                  
-          #                  div(style="display:inline-block;width:100%;text-align: center;",
-          #                      
-          #                      shinyWidgets::actionBttn(inputId = "reset",
-          #                                               style = "unite",
-          #                                               color = "primary",
-          #                                               icon =  icon("arrow-rotate-left",
-          #                                                            verify_fa = FALSE),
-          #                                               size = "sm",
-          #                                               label = "Clear Data")
-          #                      )),
           
           hr(class = "hr_runpanel"),
           
@@ -94,20 +77,6 @@ tabPanel(
                       ),
           br(),
           
-          # # Input: Decimal interval with step value ----
-          # sliderInput(inputId = "conserved_genes",
-          #             label = tags$div(class = "deconv_option_header",
-          #                              "% Genes Conserved",
-          #                              shiny::actionLink("genes_conserved_percent", 
-          #                                                label = img(src="Icons/help.svg", 
-          #                                                            class = "help_icon"))
-          #             ),
-          #             min = 0, max = 100,
-          #             value = 70, step = 5,
-          #             width = '225px'),
-          # 
-          # br(),
-          
           radioButtons(inputId = "tumour_intrinsic",
                        label = tags$div(class = "deconv_option_header",
                                         "Tumour Intrinsic Genes",
@@ -120,34 +89,6 @@ tabPanel(
                                    "No" = FALSE),
                        
                        inline = TRUE)
-          
-          # Code for conditional reset and run button
-          
-          # ,conditionalPanel(condition = "output.finishedUploading || input.example_data",
-          #                  
-          #                  hr(class = "hr_runpanel"),
-          #                  
-          #                  br(), 
-          #                  
-          #                  div(style="display:inline-block;width:100%;text-align: center;",
-          #                      
-          #                      shinyWidgets::actionBttn(inputId = "run_deconv",
-          #                                               style = "unite",
-          #                                               color = "success",
-          #                                               icon =  icon("running"),
-          #                                               size = "md",
-          #                                               label = "Run")
-          #                      
-          #                      ,shinyWidgets::actionBttn(inputId = "reset",
-          #                                               style = "unite",
-          #                                               color = "danger",
-          #                                               icon =  icon("arrow-rotate-left",
-          #                                                            verify_fa = FALSE),
-          #                                               size = "md",
-          #                                               label = "Reset")
-          # 
-          #                      ))
-
         ),
         
         # SIDEBAR PANEL END ----
